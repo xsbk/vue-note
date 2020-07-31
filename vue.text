@@ -1,0 +1,606 @@
+Vue
+    Vue简介
+        概念
+            渐进式框架
+        安装
+            npm
+            直接引入（CDN引入）
+            下载引入
+        MVVM架构
+    Vue基础语法
+        el:
+        data:
+        methods:
+        生命周期
+            created
+            mounted
+            updated
+            destroyed
+        指定属性：
+            mustache:胡子语法 
+                双括号{{}}
+            v-once指令：
+                后面不需跟其他表达式
+                只渲染一次，不随数据改变而改变
+            v-html
+                相当于innerHTML
+            v-text
+                绑定文本内容
+            v-pre
+                原样显示 不解析
+            v-cloak
+                vue解析前显示，解析后消失
+                可利用这个设置[v-cloak]{display:none}
+            v-bind(:)
+                属性动态绑定
+                href class src style
+                :class="{key:vale}" //可放对象 函数 数组
+                :style = "{属性名，属性值}" //对象
+                :style = "[]"   //数组
+        计算属性:computed
+            computed:{
+                name:function(){
+                    return val;
+                }
+            }
+            getter和setter
+            computed:{
+                name:{
+                    set:function(){
+                        //一般没有set方法，只读属性
+                    },
+                    get:function(){
+                        return val;
+                    }
+                }
+            }
+            调用 {{name}} 不需要加小括号
+            计算属性的缓存
+                有缓存，不需要每次调用
+        ES6
+            let、var、const
+            对象字面量增强
+        事件交互 v-on:==>@
+            $event 事件对象
+            修饰符
+                .prevent 阻止默认事件
+                .stop 阻止冒泡
+                .once只触发一次
+            @keyup[.enter]键盘事件（回车事件）
+        条件判断
+            v-if v-else-if v-else
+            复用、虚拟DOM
+                使用key 标识，解决复用问题
+            v-show  display
+                是否显示
+        v-for
+            key的绑定 :key="item" 最好绑定元素  保证一一对应
+            diff算法
+        数组中数据响应式绑定
+            pop() push() shift() unshift() splice() sort() reverse()  set(数组，索引，修改后值)
+            通过索引修改数组元素值 不响应式绑定。
+            数组高级方法
+                filter(funciton(item){
+                    return 条件判断 //布尔值 创建一个新数组
+                })
+                map(function(item){
+                    return //返回每次数组元素操作 创建一个新数组
+                })
+                forEach(function(item,index,arr){
+                   //遍历数组 没有返回值
+                })
+                reduce(function(pre,cur){
+                    return pre+cur;
+                }，0)
+        v-model
+            表单双向绑定
+            input  v-on:input="" 监听input输入事件
+            radio checkbox(单选与多选)多选时用数组，单选布尔值
+            select 绑定在select上（单选与多选）multiple
+            input值绑定 :value
+            v-model修饰符
+                .lazy 懒加载  当input失去焦点或者回车时，改变数据
+                .number  默认返回字符型  转化为number类型
+                .trim  去掉首尾空格
+    组件化开发
+        组件化思想
+        使用组件步骤
+            创建组件构造器
+                Vue.extend({
+                    template:"" ,//组件里的内容
+                    components:{name:val} //子组件
+                }) 
+            注册组件
+                Vue.component() 
+                //在new Vue外面 注册的全局组件
+                //局部组件 在new Vue({components:{name:val}})
+            使用组件
+                Vue实例的作用范围内使用组件
+        父组件与子组件
+        组件语法糖
+            Vue.component(
+                name,
+                {
+                    template:"#x",
+                    data(){
+                        return {
+                            //数据  必须是函数 并且返回对象
+                        }
+                    },
+                    methods:{
+
+                    }
+                }
+            ); //全局
+            {
+                components:{
+                    name:{
+                        template:"#x",
+                    }
+                }
+                
+            } //局部
+            模板创建 
+                <script type="text-x-template id="x"></script>
+                或者
+                <template id="x"></template>
+        数据访问
+            组件不能直接访问实例里的数据
+            父组件传给子组件数据：
+                父组件使用v-bind:(:)传递数据 :name="val" 命名为驼峰时 用-连接2
+                子组件使用props接收数据 props:['name']  
+                    //数组对象，可接收多个
+                    //对象{name:}类型限制
+                    //对象{name:{type：类型限制,default:默认值,required:布尔值}}
+            子组件向父组件传递数据
+                子组件：
+                    $emit() //子组件来触发事件
+                    fun(){
+                        this.$emit(name,params)
+                    }
+                父组件：
+                    v-on/@name=fn  来监听子组件
+        与v-model双向绑定结合使用
+        父组件访问子组件 children  refs
+            父组件： this.$children  //返回数组
+                    this.$refs //返回对象 在子组件标签里加 ref = ""
+            子组件：
+        子访问父 parent root
+            this.$parent.属性
+            this.$root
+        父组件访问子组件下的组件
+            this.$bus.$emit("name")  //子组件里注册
+            this.$bus.$on('name',()=>{}) //父组件里调用
+            Vue.prototype.$bus = new Vue()  //在Vue实例原型上绑定
+    插槽slot
+        组件的插槽也是为了让我们封装的组件更加具有扩展性。
+        让使用者可以决定组件内部的一些内容到底展示什么
+        基本使用
+            组件里定义 <slot name="n"> 放默认标签</slot>  //name联系起来 一个组件可使用多个插槽，一个插槽时可不需要name
+            使用组件时：里面放不同标签 替换插槽 <cpn slot = "n"></cpn>
+    编译作用域
+    作用域插槽
+        父组件替换插槽的标签，内容由子组件决定
+        父组件使用子组件的插槽数据
+            v-slot="slot"  slot.data//父组件拿到子组件插槽数据
+            :data="pLanguages" //子组件传递插槽数据
+            <cpn>
+                <template v-slot="slot">
+                    <span >{{slot.data.join("-")}}-</span>
+                </template>
+            </cpn>
+            <template id="cpn">
+                <slot :data="pLanguages">
+                </slot>
+            </template>
+    模块化开发
+        基础封装
+        规范：
+            CommonJs  module.exports={} require(url)
+            AMD 
+            CMD 
+            ES6的Modules
+                导出
+                    export{}
+                    export var name = ""
+                    export function name(){}
+                    export default 默认导出，只有一个
+                导入
+                    import {} from url 
+                    import name from url 
+                    import * as name from url //全部导出name.prop
+        webpack
+            是一个现代的JavaScript应用的静态打包工具
+            安装：npm install  webpack@3.6.0 -g  （全局安装）
+                npm install  webpack@3.6.0  --save-dev 局部安装
+            webpack.config.js与package.json配置
+                webpack.config.js
+                    const path = require("path");
+                    module.exports={
+                        entry:"./src/main.js",
+                        output:{
+                            path:path.resolve(__dirname,'dist'), //动态获取路径
+                            filename:"bundle.js",
+                            publicPath:'dist/' //所有路径前加dist
+                        },
+                    }
+            package.json
+                "scripts": {
+                    "test": "echo \"Error: no test specified\" && exit 1",
+                    "bulid": "webpack" //npm run bulid
+                },
+            loader:
+                webpack非常核心的概念
+                安装 
+                    安装css加载以及解析
+                        npm install --save-dev css-loader@3.6.0 
+                        npm install style-loader@1.2.1 --save-dev 
+                    配置css相关信息（webpack.config.js）
+                        module:{
+                            rules:[
+                                {
+                                    test:/\.css$/,
+                                    use:["style-loader","css-loader]//多个loader从右到左执行
+                                    //css-loader只负责加载 style-loader解析css到dom中
+                                }
+                            ]
+                        }
+            图片处理
+                npm install url-loader@1.1.2 --save-dev 
+                {
+                    test:/\.(png|jpg|gif|jpeg)$/,
+                    use:[
+                        loader:"url-loader",
+                        limit:8196, //图片超过limit 加载file-loader处理图片但需要注意路径问题
+                        name:"img/[name].[hash:8].[ext]"
+                    ]
+                }
+            ES6语法处理 babel
+            npm install --save-dev babel-loader@7 babel-core babel-preset-es2015
+
+                {
+                    test:/\.js$/,
+                    exclude:/(node_modules|bower_components)/,  //排除
+                    use:{
+                        loader:'babel-loader',
+                        options:{
+                            presets:['es2015']
+                        }
+                    }
+                
+                }
+        webpack配置vue
+            npm install vue --save 
+            使用：import Vue from "vue"
+            注意配置webpack.config.js中
+                resolve:{
+                    alias:{   //别名
+                        "vue$":"vue/dist/vue.esm.js"
+                    },
+                    extensions:['.js','.css','.vue']//引用导入时文件名可省略.js/.css/.vue
+                }
+            el和template
+        Plugin使用 都需要先安装，再引入导入 最后使用
+            插件：对现有的框架进行扩展
+                loader主要对于某些类型的模块进行转换  转换器
+                plugin是插件，对于webpack进行扩展
+            添加版权
+                const webpack = require("webpack");
+                plugin:[
+                    new webpack.BnnerPlugin('最终版权归。。。'),
+                ]
+            打包html的plugin
+                const HtmlWebpackPlugin = require("html-webpack-plugin");
+                npm install html-webpack-plugin --save-dev
+                new HtmlWebpackPlugin()
+            js压缩的Plugin 
+                const UglifyjsWebpackPlugin = require("uglifyjs-webpack-plugin");
+                npm install uglifyjs-webpack-plugin@1.1.1 --save-dev
+                new UglifyjsWebpackPlugin()
+        搭建本地服务器
+            基于nodejs
+            安装：
+                npm install --save-dev webpack-dev-server@2.9.3
+            配置
+                webpack.config.js里配置
+                devServer:{
+                    contentBase:'./dist',
+                    port:4000//端口号
+                }
+                package.json里的scripts下配置:
+                "dev":"webpack-dev-server --open"   //--open表示自动打开网页
+        配置文件的分离
+            安装：npm install webpack-merge --save-dev
+            将配置文件分成基础/生产/开发
+    Vue CLI
+        安装nodejs
+        安装webpack
+        安装vue CLI
+            npm install -g @vue/cli 脚手架3
+                初始化：vue create my-project
+            npm install -g @vue/cli-init 脚手架2
+                初始化 vue init webpack my-project
+            runtime-compiler与runtime-only区别
+                runtime-compiler  (v1)
+                    template->ast->render->vdom->dom
+                runtime-only (v2 代码更少 解析更快)
+                    render->vdom->dom
+            render函数使用
+        配置
+            vue-cli3配置：
+                vue ui 启动本地服务器
+                    打开一个GUI（用户界面）
+    Vue-router
+        前端路由
+            location.hash //改变不刷新页面
+            history.pushState((),'',url)//不刷新页面
+        router-view 占位标签，渲染位置
+        redirect:'/home'  重定向
+        mode:"history"  路由不使用默认的hash模式（带#号）
+        跳转：
+            router-link 标签
+                tag:指定渲染给什么组件
+                replace 无痕浏览  不存储历史浏览
+                active-class="" 改变点击之后效果class名,默认router-link-active  可在路由里修改 linkActiveClass:""
+            点击事件
+                this.$router.push('/home')  //跳转到home页面
+                this.$route 当前使用路由
+            路由动态绑定属性
+                路由部分  /:属性 
+                跳转  url/val 
+                获取 $route.params.属性
+            vue-router打包文件
+                npm run build
+                懒加载
+                    一个路由打包一个js文件
+                    懒加载：用到时再加载
+                    webpack 不常用
+                        const Home = resolve=>{
+                            require.ensure(['../components/Home.vue'],()=>{
+                                require{
+                                    resolve(require('../components/Home.vue))
+                                }
+                            })
+                        }
+                    AMD 
+                        const about = resolve=>require(['../components/about.vue'],resolve)
+                    ES6 
+                        const home = ()=>import('../components/home.vue')
+            嵌套路由
+                步骤
+                    创建子组件，并配置对应路由
+                    组件内部使用<router-view></router-view>
+                {
+                    path:"/home",
+                    component:home,
+                    children:[
+                    {
+                        path:"",
+                        redirect:"news"  //默认路由
+                    }
+                    {
+                        path:'news',
+                        component:homeNews
+
+                    },
+                    {
+                        path:'message',
+                        component:homeMessage
+
+                    }
+                    ]
+                }
+                使用的时候url==>'/home/news'    '/home/message'
+            参数传递
+                路由配置  
+                    '/name/:id'
+                    使用   '/name/val'
+                    $route.params.id
+                query
+                    {path:'',query:{}}
+                    $route.query
+            $route $router 
+                都放在vue原型链上
+                $route指当前活跃的路由
+                $router指整个路由
+            导航守卫
+                动态修改title
+                router.beforeEach((to,from,next)=>{  //前置钩子  跳转之前修改
+                    next();//需要写入  否则不跳转
+                    document.title=to.matched[0].meta.title
+                })
+                afterEach  后置钩子
+                全局守卫 
+                路由独享守卫 在路由配置位置配置
+                组件内守卫 在组件里配置
+            keep-alive vue-router 
+                keep-alive是Vue内置的一个组件，可以使被包含的组件保留状态，或避免重新渲染。
+                keep-alive 包含子组件 router-view 所有路径匹配到的视图组件都可以缓存
+                activated():{}deactivated():{} 只有在使用keep-alive
+                beforeLeave()
+                属性：
+                exclude 
+                include
+        TabBar结构
+            使用插槽(slot)分解成一个一个小的组件 name-->slot联系
+    Promise 链式编程
+        异步编程的一种解决方案  sysnic asysnic
+            new Promise((resolve,reject)=>{ //resolve  reject本身是函数
+                resolve()  //一旦调用 就会调用then里的函数
+            }).then(()=>{
+                return new Promise((resolve,reject)=>{
+                    resolve()
+                })
+            }).then(()=>{}).catch()
+        三种状态
+            pending 等待状态
+            fulfill 满足状态 会回调then
+            reject 拒绝状态 会回调catch
+            new Promise((resolve,reject)=>{
+
+            }).then(res,err)  //res是resolve回调  err是reject回调
+
+
+            return new Promise((resolve,reject)=>{resolve(res)})
+            ---->return Promise.resolve(res)
+            --->return res;
+        Promise all使用
+            Promise.all([
+                new Promise(()=>{}),
+                new Promise(()=>{})
+            ]).then()
+    Vuex
+        集中式存储管理  状态管理模式
+        应用场景：
+            需要多个组件共享的组件
+            登录状态，用户名称、用户头像、地理位置等
+            商品收藏、商品购物车
+            响应式（只是初始过的值才能实时响应）
+        store 
+            在store文件夹下创建一个index.js
+            在index.js里配置store 
+            在main.js挂载上
+        $.store.state 访问
+        核心概念
+            state 
+                单一状态树 主演存储一些变量状态
+            getters 
+                相当于组件computed
+            mutation //同步
+                里面定义函数
+                调用时使用：$store.commit(name,传参)  ---》传递过去是参数
+                    $store.commit({
+                        type:name,
+                        参数名，参数值
+                    })--->传递过去是一个对象
+            action  //异步
+                声明时需要通过mutation修改
+                    默认第一个参数context  context.commit(fn) 
+                    也可以使用promise
+                        return new Promise(()=>{})
+                调用：
+                $store.commit(fn)
+                $store.dispatch(fn,传参).then(()=>{})
+            module  
+                module里的模块会放在state中 
+                访问：$store.state.modulename.proname
+            vue.set(state.info,'age',"18") 
+    网络封装
+        JSONP封装
+            let count =1;
+            export default function originPJSONP(option){
+                const url = option.url;
+                const body = documnet.getElementsByTagName('body')[0];
+                const script = document.createElement('script);
+                const callback = 'jsonp'+ count++;
+                return new Promise((resolve,reject)=>{
+                    try{
+                        windoe[callback]=function(result){
+                            body.removeChild(script)
+                            resolve(result)
+                        }
+                        const params = handleParam(option.data);
+                        script.src=url+'?callback='+callback+params;
+                        body.appendChild(script)
+                    }catch(e){
+                        body.removeChild(script)
+                        reject(e)
+                    }
+                })
+            }
+            funciton handleParam(data){
+                let url="";
+                for(var key in data){
+                    let value = data[key]!=undefinde?data[key]:"";
+                    url+=`&${key}=${encodeURIComponent(value)}`
+                }
+                return url;
+            }
+        axios(config)
+        axios.request(config)
+        axios.get(url[,config])
+        axios.delete(url[,config])
+        axios.head(url[,config])
+        axios.put(url[,config])
+        axios.post(url[,config])
+        axios.patch(url[,config])
+
+        axios.all([])
+        axios.all([
+            axios.get("http://123.207.32.32:8000/category"),
+            axios.get(
+                'http://123.207.32.32:8000/home/data',
+                {params:{
+                    type:'sell',
+                    page:1
+                }}
+            )
+        ]).then(res=>{//返回一个数组  
+        })
+        使用axios.spread((res1,res2)=>{} 将数组解构
+        全局配置
+            axios.defaults.baseURL=""
+        拦截器
+            instance.interceptors.request.use()
+            instance.interceptors.response.use()
+    项目实践
+        搭建脚手架
+        部署在GitHub上
+        划分目录
+        css
+            :root 指根元素
+            --name 定义变量
+    项目部署
+    相关原理
+
+    better-scroll  移动滚动
+        安装与使用
+            npm install better-scroll --save 
+            import BScroll from 'better-scroll'
+            this.scroll = new BScroll('.wrapper',{ })
+        probetype=3 时   实时监听
+        上拉加载
+            1、监听滚动位置
+                pullUpLoad:true
+            2、滚动到底部事件    
+                this.scroll.on('pullingUp',()=>{})
+            3、滚动到底部之后触发，实现加载更多（异步请求数据）
+            4、加载成功之后，finishPullUp() 实现下一次的上拉加载
+            5、需要设置finishPullUp()  才能在加载之后 再次上拉加载
+            6、图片加载成功之后  刷新 refresh()
+            7、实现防抖
+        click:true  button点击事件可以监听 div不可以
+        this.scroll.refresh()   //更新
+    组件绑定点击事件： @click.native=""
+    防抖事件debounce
+        debounce(func,delay){
+            var timer =null;
+            return function(...args){
+                timer = setTimeout(()=>{
+                    if(timer){
+                        clearTimeout(timer)
+                    }
+                    func.apply(this,args)
+                },delay)
+            }
+        }
+    节流 throttle
+        function throttle(fn) {
+            let canRun = true; // 通过闭包保存一个标记
+            return function () {
+                if (!canRun) return; // 在函数开头判断标记是否为true，不为true则return
+                canRun = false; // 立即设置为false
+                setTimeout(() => { // 将外部传入的函数的执行放在setTimeout中
+                    fn.apply(this, arguments);
+                    // 最后在setTimeout执行完毕后再把标记设置为true(关键)表示可以执行下一次循环了。当定时器没有执行的时候标记永远是false，在开头被return掉
+                    canRun = true;
+                }, 500);
+            };
+        }
+    吸顶效果offsetTop
+        $el:用于获取组件元素
+    this.$nextTick() //dom渲染完成
+    mixins:[] 组件混入
+    解决移动端点击300ms延迟
+        导入fastClick
+        fastClick.attach(documnet.body) 
